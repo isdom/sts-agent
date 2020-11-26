@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+        
+    <!-- 要调用的工作类 -->
+    <bean id="updatests" class="org.jocean.sts.job.UpdateSTSJob"></bean>
+
+    <!-- 定义调用对象和调用对象的方法 -->
+    <bean id="job"
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!-- 调用的类 -->
+        <property name="targetObject" ref="updatests"/>
+        <!-- 调用类中的方法 -->
+        <property name="targetMethod">
+            <value>update</value>
+        </property>
+    </bean>
+
+    <!-- 定义触发时间 -->
+    <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="job" />
+        <!-- 每隔1分钟审批一次 -->  
+        <property name="cronExpression" value="0 */1 * * * ?" />  
+    </bean>
+
+    <bean id="schedule" lazy-init="false" autowire="no"
+        class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="trigger" />
+            </list>
+        </property>
+    </bean>
+</beans>
