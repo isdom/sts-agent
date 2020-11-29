@@ -15,7 +15,7 @@ public class UpdateSTSJob {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSJob.class);
 
     void update() {
-        LOG.info("update: zkconn info {}, ecs instance {}", _curator, _instanceId);
+        LOG.info("update by {}: zkconn info {}, ecs instance {}", this, _curator, _instanceId);
     }
 
     @Inject
