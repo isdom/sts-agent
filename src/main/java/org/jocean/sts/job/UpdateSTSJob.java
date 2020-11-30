@@ -22,8 +22,9 @@ public class UpdateSTSJob {
         final MetadataAPI.STSTokenBuilder getststoken =
                 RpcDelegater.rpc(MetadataAPI.STSTokenBuilder.class).invoker(inter2any -> _executor.submit(inter2any)).build();
         getststoken.roleName(_ecsRole).call().subscribe(resp ->
-            LOG.info("ak_id {}/ak_secret {}/token {}",
-                    resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken()));
+            LOG.info("ak_id {}/ak_secret {}/token {}\nExpiration:{}\nLastUpdated:{}",
+                    resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken(),
+                    resp.getExpiration(), resp.getLastUpdated()));
     }
 
     @Inject
