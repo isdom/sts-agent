@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.curator.framework.CuratorFramework;
+import org.jocean.aliyun.ecs.MetadataAPI;
+import org.jocean.svr.annotation.RpcFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +18,16 @@ public class UpdateSTSJob {
 
     void update() {
         LOG.info("update by {}: zkconn info {}, ecs instance {}", this, _curator, _instanceId);
+        getststoken.roleName(_ecsRole).call().subscribe(resp ->
+            LOG.info("ak_id {}/ak_secret {}/token {}",
+                    resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken()));
     }
+
+    @RpcFacade
+    MetadataAPI.STSTokenBuilder  getststoken;
+
+    @Value("${ecs.role}")
+    String _ecsRole;
 
     @Inject
     @Named("${zkconn.name}")
