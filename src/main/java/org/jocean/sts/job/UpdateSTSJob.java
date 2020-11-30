@@ -5,6 +5,7 @@ import javax.inject.Named;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.jocean.aliyun.ecs.MetadataAPI;
+import org.jocean.http.RpcExecutor;
 import org.jocean.svr.annotation.RpcFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +18,17 @@ public class UpdateSTSJob {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSJob.class);
 
     void update() {
-        LOG.info("update by {}: zkconn info {}, ecs instance {}", this, _curator, _instanceId);
-        getststoken.roleName(_ecsRole).call().subscribe(resp ->
-            LOG.info("ak_id {}/ak_secret {}/token {}",
-                    resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken()));
+        LOG.info("update by {}: executor {}, zkconn info {}, ecs instance {}", this, _executor, _curator, _instanceId);
+//        getststoken.roleName(_ecsRole).call().subscribe(resp ->
+//            LOG.info("ak_id {}/ak_secret {}/token {}",
+//                    resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken()));
     }
 
     @RpcFacade
     MetadataAPI.STSTokenBuilder  getststoken;
+
+    @Inject
+    RpcExecutor _executor;
 
     @Value("${ecs.role}")
     String _ecsRole;
