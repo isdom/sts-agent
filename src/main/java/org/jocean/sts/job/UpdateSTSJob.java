@@ -46,7 +46,7 @@ public class UpdateSTSJob {
                     return;
                 }
             }
-            final String stscPath = _ecsPath + "/stsc/sts_credentials." + _instanceId;
+            final String stscPath = _ecsPath + "/nop.stsc/sts_credentials." + _instanceId;
             try {
                 createOrUpdateFor(stscPath)
                     .forPath(stscPath, stsAsText(_instanceId,
