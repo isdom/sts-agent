@@ -46,6 +46,7 @@ public class UpdateSTSJob {
                     return;
                 }
             }
+            LOG.info("stsc for {} changed! start to update content", stscId);
             final String stscPath = _ecsPath + "/sts_credentials." + _instanceId;
             try {
                 createOrUpdateFor(stscPath)
