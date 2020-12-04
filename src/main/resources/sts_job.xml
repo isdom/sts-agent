@@ -25,7 +25,7 @@
     <bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="job" />
         <!-- 每隔1分钟审批一次 -->  
-        <property name="cronExpression" value="0 */1 * * * ?" />  
+        <property name="cronExpression" value="${job.cron}" />  
     </bean>
 
     <bean id="schedule" lazy-init="false" autowire="no"
