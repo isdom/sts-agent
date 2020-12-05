@@ -19,6 +19,8 @@
         <property name="targetMethod">
             <value>update</value>
         </property>
+        <!-- 禁止并发 -->  
+        <property name="concurrent" value="false"/>
     </bean>
 
     <!-- 定义触发时间 -->
