@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
         
     <!-- 要调用的工作类 -->
-    <bean id="updatests" class="org.jocean.sts.job.UpdateSTSJob" scope="prototype" />
+    <bean id="updatests" class="org.jocean.sts.job.UpdateSTSJob"/>
 
     <!-- 定义调用对象和调用对象的方法 -->
     <bean id="job"

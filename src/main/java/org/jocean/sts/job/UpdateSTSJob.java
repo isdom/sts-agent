@@ -15,11 +15,10 @@ import org.jocean.rpc.RpcDelegater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 
 import com.google.common.base.Charsets;
 
-@Scope("prototype")
+// @Scope("prototype")
 public class UpdateSTSJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSJob.class);
