@@ -8,10 +8,8 @@ import org.apache.curator.framework.api.PathAndBytesable;
 import org.apache.zookeeper.CreateMode;
 import org.jocean.aliyun.ecs.MetadataAPI;
 import org.jocean.aliyun.sts.STSCredentials;
-import org.jocean.http.RpcExecutor;
 import org.jocean.idiom.BeanHolder;
 import org.jocean.idiom.ExceptionUtils;
-import org.jocean.rpc.RpcDelegater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +26,12 @@ public class UpdateSTSJob {
 
         final STSCredentials stsc = beanHolder.getBean(stscId, STSCredentials.class);
 
-        LOG.info("update by {}: executor {}, zkconn info {}, ecs instance {}/stsc:{}",
-                this, _executor, _curator, _instanceId, stsc);
+//        LOG.info("update by {}: executor {}, zkconn info {}, ecs instance {}/stsc:{}",
+//                this, _executor, _curator, _instanceId, stsc);
 
-        final MetadataAPI.STSTokenBuilder getststoken =
-                RpcDelegater.rpc(MetadataAPI.STSTokenBuilder.class).invoker(inter2any -> _executor.submit(inter2any)).build();
-        getststoken.roleName(_ecsRole).call().subscribe(resp -> {
+//        final MetadataAPI.STSTokenBuilder getststoken =
+//                RpcDelegater.rpc(MetadataAPI.STSTokenBuilder.class).invoker(inter2any -> _executor.submit(inter2any)).build();
+        _getststoken.roleName(_ecsRole).call().subscribe(resp -> {
             LOG.info("ak_id {}/ak_secret {}/token {}\nExpiration:{}\nLastUpdated:{}",
                     resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken(),
                     resp.getExpiration(), resp.getLastUpdated());
@@ -102,7 +100,7 @@ public class UpdateSTSJob {
     }
 
     @Inject
-    RpcExecutor _executor;
+    MetadataAPI.STSTokenBuilder _getststoken;
 
     @Value("${ecs.path}")
     private String _ecsPath;

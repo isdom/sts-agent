@@ -7,6 +7,10 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
         
+    <context:component-scan annotation-config="true"
+        base-package="org.jocean.sts.support"
+    />
+  
     <!-- 要调用的工作类 -->
     <bean id="updatests" class="org.jocean.sts.job.UpdateSTSJob"/>
 
