@@ -1,4 +1,4 @@
-package org.jocean.sts.support;
+package org.jocean.sts.job;
 
 import javax.inject.Inject;
 
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GetSTSToken implements FactoryBean<MetadataAPI.STSTokenBuilder> {
+class GetSTSToken implements FactoryBean<MetadataAPI.STSTokenBuilder> {
 
     @Override
     public MetadataAPI.STSTokenBuilder getObject() throws Exception {

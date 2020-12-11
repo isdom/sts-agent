@@ -8,17 +8,17 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
         
     <context:component-scan annotation-config="true"
-        base-package="org.jocean.sts.support"
+        base-package="org.jocean.sts.job"
     />
   
     <!-- 要调用的工作类 -->
-    <bean id="updatests" class="org.jocean.sts.job.UpdateSTSJob"/>
+    <!-- bean id="updatests" class="org.jocean.sts.job.UpdateSTSCJob"/ -->
 
     <!-- 定义调用对象和调用对象的方法 -->
     <bean id="job"
         class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
         <!-- 调用的类 -->
-        <property name="targetObject" ref="updatests"/>
+        <property name="targetObject" ref="updatestsc"/>
         <!-- 调用类中的方法 -->
         <property name="targetMethod">
             <value>update</value>

@@ -13,25 +13,26 @@ import org.jocean.idiom.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.google.common.base.Charsets;
 
-// @Scope("prototype")
-public class UpdateSTSJob {
+@Component("updatestsc")
+class UpdateSTSCJob {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSCJob.class);
 
     void update() {
         final String stscId = _instanceId + "-stsc";
 
         final STSCredentials stsc = beanHolder.getBean(stscId, STSCredentials.class);
 
-//        LOG.info("update by {}: executor {}, zkconn info {}, ecs instance {}/stsc:{}",
-//                this, _executor, _curator, _instanceId, stsc);
+        final MetadataAPI.STSTokenBuilder getststoken = beanHolder.getBean(MetadataAPI.STSTokenBuilder.class);
 
-//        final MetadataAPI.STSTokenBuilder getststoken =
-//                RpcDelegater.rpc(MetadataAPI.STSTokenBuilder.class).invoker(inter2any -> _executor.submit(inter2any)).build();
-        _getststoken.roleName(_ecsRole).call().subscribe(resp -> {
+        LOG.info("update by {}: getststoken {}, zkconn info {}, ecs instance {}/stsc:{}",
+                this, getststoken, _curator, _instanceId, stsc);
+
+        getststoken.roleName(_ecsRole).call().subscribe(resp -> {
             LOG.info("ak_id {}/ak_secret {}/token {}\nExpiration:{}\nLastUpdated:{}",
                     resp.getAccessKeyId(), resp.getAccessKeySecret(), resp.getSecurityToken(),
                     resp.getExpiration(), resp.getLastUpdated());
@@ -99,21 +100,18 @@ public class UpdateSTSJob {
         }
     }
 
-    @Inject
-    MetadataAPI.STSTokenBuilder _getststoken;
-
     @Value("${ecs.path}")
     private String _ecsPath;
 
     @Value("${ecs.role}")
     String _ecsRole;
 
+    @Value("${ecs.id}")
+    String _instanceId;
+
     @Inject
     @Named("${zkconn.name}")
     CuratorFramework _curator;
-
-    @Value("${ecs.id}")
-    String _instanceId;
 
     @Inject
     BeanHolder beanHolder;
