@@ -1,7 +1,9 @@
 package org.jocean.sts.job;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.PathAndBytesable;
@@ -22,15 +24,31 @@ class UpdateSTSCJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSCJob.class);
 
+    public void initZkconns(final String zkconns) {
+        for (final String name : zkconns.split(",")) {
+            LOG.info("try to find zkconn named({})", name);
+            final CuratorFramework curator = beanHolder.getBean(name, CuratorFramework.class);
+            if (null != curator) {
+                _curators.add(curator);
+                LOG.info("found zkconn({}) named({})", curator, name);
+            } else {
+                LOG.info("NOT found zkconn named({})!", name);
+            }
+        }
+    }
+
     void update() {
+        if (_curators.isEmpty()) {
+            initZkconns(this._zkconns);
+        }
+
         final String stscId = _instanceId + "-stsc";
 
         final STSCredentials stsc = beanHolder.getBean(stscId, STSCredentials.class);
 
         final MetadataAPI.STSTokenBuilder getststoken = beanHolder.getBean(MetadataAPI.STSTokenBuilder.class);
 
-        LOG.info("update by {}: getststoken {}, zkconn info {}, ecs instance {}/stsc:{}",
-                this, getststoken, _curator, _instanceId, stsc);
+        LOG.info("update by {}: getststoken {}, ecs instance {}/stsc:{}", this, getststoken, _instanceId, stsc);
 
         getststoken.roleName(_ecsRole).call().subscribe(resp -> {
             LOG.info("ak_id {}/ak_secret {}/token {}\nExpiration:{}\nLastUpdated:{}",
@@ -46,16 +64,18 @@ class UpdateSTSCJob {
             }
             LOG.info("stsc for {} changed! start to update content", stscId);
             final String stscPath = _ecsPath + "/sts_credentials." + _instanceId;
-            try {
-                createOrUpdateFor(stscPath)
-                    .forPath(stscPath, stsAsText(_instanceId,
-                            resp.getAccessKeyId(),
-                            resp.getAccessKeySecret(),
-                            resp.getSecurityToken(),
-                            resp.getExpiration(),
-                            resp.getLastUpdated()).getBytes(Charsets.UTF_8));
-            } catch (final Exception e) {
-                LOG.warn("exception when create or update sts_credentials, detail: {}", ExceptionUtils.exception2detail(e));
+            for (final CuratorFramework curator : _curators) {
+                try {
+                    createOrUpdateFor(curator, stscPath)
+                        .forPath(stscPath, stsAsText(_instanceId,
+                                resp.getAccessKeyId(),
+                                resp.getAccessKeySecret(),
+                                resp.getSecurityToken(),
+                                resp.getExpiration(),
+                                resp.getLastUpdated()).getBytes(Charsets.UTF_8));
+                } catch (final Exception e) {
+                    LOG.warn("exception when create or update sts_credentials, detail: {}", ExceptionUtils.exception2detail(e));
+                }
             }
 
         });
@@ -90,13 +110,13 @@ class UpdateSTSCJob {
         return template.replace(key, null != value ? value : "");
     }
 
-    private PathAndBytesable<?> createOrUpdateFor(final String path) throws Exception {
-        if (null != this._curator.checkExists().forPath(path)) {
-            LOG.info("update node: {}", path);
-            return this._curator.setData();
+    private PathAndBytesable<?> createOrUpdateFor(final CuratorFramework curator, final String path) throws Exception {
+        if (null != curator.checkExists().forPath(path)) {
+            LOG.info("{} update node: {}", curator, path);
+            return curator.setData();
         } else {
-            LOG.info("create node: {}", path);
-            return this._curator.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT);
+            LOG.info("{} create node: {}", curator, path);
+            return curator.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT);
         }
     }
 
@@ -109,9 +129,14 @@ class UpdateSTSCJob {
     @Value("${ecs.id}")
     String _instanceId;
 
-    @Inject
-    @Named("${zkconn.name}")
-    CuratorFramework _curator;
+//    @Inject
+//    @Named("${zkconn.name}")
+//    CuratorFramework _curator;
+
+    @Value("${zkconns}")
+    String _zkconns;
+
+    final List<CuratorFramework> _curators = new ArrayList<>();
 
     @Inject
     BeanHolder beanHolder;
