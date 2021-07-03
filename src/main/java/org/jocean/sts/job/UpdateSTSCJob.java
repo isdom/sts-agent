@@ -24,9 +24,10 @@ class UpdateSTSCJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateSTSCJob.class);
 
+    @Value("${zkconns}")
     public void initZkconns(final String zkconns) {
         for (final String name : zkconns.split(",")) {
-            LOG.info("try to find zkconn named({})", name);
+            LOG.info("try to find zkconn named({}) by beanHolder:{}", name, beanHolder);
             final CuratorFramework curator = beanHolder.getBean(name, CuratorFramework.class);
             if (null != curator) {
                 _curators.add(curator);
@@ -38,10 +39,6 @@ class UpdateSTSCJob {
     }
 
     void update() {
-        if (_curators.isEmpty()) {
-            initZkconns(this._zkconns);
-        }
-
         final String stscId = _instanceId + "-stsc";
 
         final STSCredentials stsc = beanHolder.getBean(stscId, STSCredentials.class);
@@ -128,13 +125,6 @@ class UpdateSTSCJob {
 
     @Value("${ecs.id}")
     String _instanceId;
-
-//    @Inject
-//    @Named("${zkconn.name}")
-//    CuratorFramework _curator;
-
-    @Value("${zkconns}")
-    String _zkconns;
 
     final List<CuratorFramework> _curators = new ArrayList<>();
 
