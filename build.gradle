@@ -32,8 +32,8 @@ dependencies {
     compile "org.quartz-scheduler:quartz:${quartzVersion}"
 
     /* Log */
-    compile 'org.slf4j:jcl-over-slf4j:1.7.32'
-    compile 'org.slf4j:log4j-over-slf4j:1.7.32'
+    compile 'org.slf4j:jcl-over-slf4j:1.7.35'
+    compile 'org.slf4j:log4j-over-slf4j:1.7.35'
     compile 'ch.qos.logback:logback-classic:1.2.10'
 
     testCompile 'junit:junit:4.13.2'
