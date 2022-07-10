@@ -59,7 +59,7 @@ class UpdateSTSCJob {
                     return;
                 }
             }
-            LOG.info("stsc for {} changed! start to update content", stscId);
+            LOG.info("stsc for {} changed! start to update content for zkpath:{}", stscId, _ecsPath);
             final String stscPath = _ecsPath + "/sts_credentials." + _instanceId;
             for (final CuratorFramework curator : _curators) {
                 try {
