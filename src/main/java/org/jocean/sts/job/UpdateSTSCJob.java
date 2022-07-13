@@ -70,7 +70,7 @@ class UpdateSTSCJob {
                                 resp.getSecurityToken(),
                                 resp.getExpiration(),
                                 resp.getLastUpdated()).getBytes(Charsets.UTF_8));
-                    LOG.info("stsc for {} update {} content end", stscId, _ecsPath);
+                    LOG.info("stsc for {} changed! end of update content for zkpath: {}.", stscId, _ecsPath);
                 } catch (final Exception e) {
                     LOG.warn("exception when create or update sts_credentials, detail: {}", ExceptionUtils.exception2detail(e));
                 }
