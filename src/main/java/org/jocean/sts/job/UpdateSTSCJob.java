@@ -70,7 +70,7 @@ class UpdateSTSCJob {
                                 resp.getSecurityToken(),
                                 resp.getExpiration(),
                                 resp.getLastUpdated()).getBytes(Charsets.UTF_8));
-                    LOG.info("stsc for {} changed! end of update content for zkpath: {}.", stscId, _ecsPath);
+                    LOG.info("stsc for {} changed! end of update content for zkpath:{}.", stscId, _ecsPath);
                 } catch (final Exception e) {
                     LOG.warn("exception when create or update sts_credentials, detail: {}", ExceptionUtils.exception2detail(e));
                 }
@@ -110,10 +110,10 @@ class UpdateSTSCJob {
 
     private PathAndBytesable<?> createOrUpdateFor(final CuratorFramework curator, final String path) throws Exception {
         if (null != curator.checkExists().forPath(path)) {
-            LOG.info("{} update node: {}", curator, path);
+            LOG.info("{} update node for path {}", curator, path);
             return curator.setData();
         } else {
-            LOG.info("{} create node: {}", curator, path);
+            LOG.info("{} create node for path {}", curator, path);
             return curator.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT);
         }
     }
