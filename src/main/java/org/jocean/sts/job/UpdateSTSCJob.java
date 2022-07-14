@@ -26,6 +26,7 @@ class UpdateSTSCJob {
 
     @Value("${zkconns}")
     public void initZkconns(final String zkconns) {
+        LOG.info("enter initZkconns with :{}", zkconns);
         for (final String name : zkconns.split(",")) {
             LOG.info("try to find zkconn named({}) by beanHolder:{}", name, beanHolder);
             final CuratorFramework curator = beanHolder.getBean(name, CuratorFramework.class);
@@ -36,6 +37,7 @@ class UpdateSTSCJob {
                 LOG.info("NOT found zkconn named({})!", name);
             }
         }
+        LOG.info("leave initZkconns with :{}", zkconns);
     }
 
     void update() {
