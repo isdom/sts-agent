@@ -41,6 +41,8 @@ class UpdateSTSCJob {
     }
 
     void update() {
+    	LOG.info("enter update");
+    	
         final String stscId = _instanceId + "-stsc";
 
         final STSCredentials stsc = beanHolder.getBean(stscId, STSCredentials.class);
@@ -79,6 +81,7 @@ class UpdateSTSCJob {
             }
 
         });
+    	LOG.info("leave update");
     }
 
     private static final String STS_TEMPLATE =
