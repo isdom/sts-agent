@@ -13,7 +13,7 @@ class GetSTSToken implements FactoryBean<MetadataAPI.STSTokenBuilder> {
 
     @Override
     public MetadataAPI.STSTokenBuilder getObject() throws Exception {
-        return RpcDelegater.rpc(MetadataAPI.STSTokenBuilder.class).invoker(inter2any -> _executor.submit(inter2any)).build();
+        return RpcDelegater.rpc(MetadataAPI.STSTokenBuilder.class).emitter(inter2any -> _executor.submit(inter2any)).build();
     }
 
     @Override
